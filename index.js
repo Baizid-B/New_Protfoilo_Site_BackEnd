@@ -33,9 +33,17 @@ async function run() {
     const database = client.db("projectdb")
     const projectCollcetion = database.collection("projectList")
 
+    // project data posta in backend ---
     app.post('/project', async(req,res) =>{
       const projectData = req.body;
       const result = await projectCollcetion.insertOne(projectData)
+      res.send(result)
+    })
+
+    // project data show in front end---
+    app.get('/projects',async(req,res) =>{
+      const cusrsor = projectCollcetion.find()
+      const result = await cusrsor.toArray()
       res.send(result)
     })
 
