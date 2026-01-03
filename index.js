@@ -10,8 +10,9 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 min
-  max: 10, // 100 requests per IP
+  windowMs: 5 * 60 * 1000, // 5 min
+  max: 5, // 5 requests per IP
+  message: "Too many requests, try again later",
 });
 
 app.use(
@@ -49,36 +50,14 @@ async function run() {
     const database = client.db("projectdb");
     const projectCollcetion = database.collection("projectList");
 
-    // project data posta in backend ---
-    // app.post('/project', async(req,res) =>{
-    //   const projectData = req.body;
-    //   const result = await projectCollcetion.insertOne(projectData)
-    //   res.send(result)
-    // })
-
     const { body, validationResult } = require("express-validator");
 
-    // app.post(
-    //   "/project",
-    //   body("title").notEmpty(),
-    //   body("description").isLength({ min: 10 }),
-    //   async (req, res) => {
-    //     const errors = validationResult(req);
-    //     if (!errors.isEmpty()) {
-    //       return res.status(400).json({ errors: errors.array() });
-    //     }
-
-    //     const result = await projectCollection.insertOne(req.body);
-    //     res.send(result);
-    //   }
-    // );
-
     app.post(
-      "/project",
+      "/project",limiter,
       [
         body("name").notEmpty().withMessage("Project name is required"),
         body("details")
-          .isLength({ min: 10 })
+          .isLength({ min: 5})
           .withMessage("Details must be at least 10 characters"),
         body("image").isURL().withMessage("Image must be a valid URL"),
         body("multiple")
