@@ -10,8 +10,8 @@ const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 
 const limiter = rateLimit({
-  windowMs: 5 * 60 * 1000, // 5 min
-  max: 5, // 5 requests per IP
+  windowMs: 10 * 60 * 1000, // 10 min
+  max: 10, // 10 requests per IP
   message: "Too many requests, try again later",
 });
 
@@ -57,12 +57,12 @@ async function run() {
       [
         body("name").notEmpty().withMessage("Project name is required"),
         body("details")
-          .isLength({ min: 5})
+          .isLength({ min: 10})
           .withMessage("Details must be at least 10 characters"),
         body("image").isURL().withMessage("Image must be a valid URL"),
         body("multiple")
-          .isArray()
-          .withMessage("Multiple images must be an array"),
+          .isURL()
+          .withMessage("Image must be a valid URL"),
       ],
       async (req, res) => {
         // Check validation result
