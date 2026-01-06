@@ -17,7 +17,7 @@ const limiter = rateLimit({
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", ""],
+    origin: ["http://localhost:5173", "https://baizid-bostami-b.netlify.app"],
     credentials: true,
   })
 );
@@ -45,7 +45,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const database = client.db("projectdb");
     const projectCollcetion = database.collection("projectList");
