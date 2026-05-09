@@ -5,10 +5,8 @@ require("dotenv").config();
 const helmet = require("helmet");
 const { body, validationResult } = require("express-validator");
 
-// Node 18+ হলে আলাদা করে node-fetch ইম্পোর্ট করার দরকার নেই, তাই এটি কমেন্ট করে রাখছি। 
-// যদি এরর দেয় তবে নিচের লাইনটি আনকমেন্ট করতে পারেন।
-// const {fetch} = require("node-fetch"); 
-const { runAgent } = require("./agent.js");
+// routes import
+const chatRoutes = require("./routes/chat");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -29,24 +27,9 @@ app.use(
 app.use(express.json());
 app.use(helmet());
 
-// --- AI AGENT ROUTE ---
+// route use
+app.use("/api/chat", chatRoutes);
 
-app.post("/chat", async (req, res) => {
-  // Safety check: req.body বা message না থাকলে এরর হ্যান্ডেল করবে (সার্ভার ক্র্যাশ করবে না)
-  if (!req.body || !req.body.message) {
-    return res.status(400).json({ error: "Request body must contain a 'message' property." });
-  }
-
-  const { message } = req.body;
-
-  try {
-    const reply = await runAgent(message);
-    res.json({ reply });
-  } catch (error) {
-    console.error("AI Agent Error:", error);
-    res.status(500).json({ error: "Server error or AI is busy" });
-  }
-});
 
 // --- MONGODB CONNECTION ---
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.jhnzp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
